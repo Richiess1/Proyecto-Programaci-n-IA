@@ -8,6 +8,13 @@ from app.schemas.evaluacion import (
     Semaforo,
 )
 
+# app/ia/motor_ia.py
+class RespuestaInvalidaIA(Exception): pass
+class ProveedorIAError(Exception): pass
+class LimiteTokensError(Exception): pass
+class FormatoInesperado(Exception): pass
+
+# ... (tu código actual de evaluar_idea) ...
 
 def evaluar_idea(idea: dict) -> EvaluacionIA:
     """Evalúa una Idea (4.1) y devuelve una EvaluacionIA (4.2).

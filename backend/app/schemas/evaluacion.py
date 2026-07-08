@@ -1,9 +1,9 @@
 from __future__ import annotations
-
 from enum import Enum
-
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
+# --- Contratos base (lo que ya tenías) ---
 
 class Semaforo(str, Enum):
     """Estados posibles del semáforo (contrato 4.2)."""
@@ -11,19 +11,16 @@ class Semaforo(str, Enum):
     AMARILLO = "amarillo"
     ROJO = "rojo"
 
-
 class Foda(BaseModel):
     fortalezas: list[str]
     debilidades: list[str]
     oportunidades: list[str]
     amenazas: list[str]
 
-
 class PasoValidacion(BaseModel):
     tipo: str
     descripcion: str
     metrica: str
-
 
 class CriteriosEvaluados(BaseModel):
     problema: str
@@ -34,9 +31,7 @@ class CriteriosEvaluados(BaseModel):
     monetizacion: str
     factibilidad: str
 
-
 class EvaluacionIA(BaseModel):
-    # extra="forbid": la IA no puede agregar campos fuera del contrato 4.2.
     model_config = ConfigDict(extra="forbid")
 
     semaforo: Semaforo
@@ -46,10 +41,9 @@ class EvaluacionIA(BaseModel):
     supuestos_criticos: list[str]
     riesgos: list[str]
     propuesta_valor_mejorada: str
-    preguntas_aclaracion: list[str] = Field(default_factory=list)  # puede venir vacío
+    preguntas_aclaracion: list[str] = Field(default_factory=list)
     plan_validacion: list[PasoValidacion]
     criterios_evaluados: CriteriosEvaluados
-
 
 class Idea(BaseModel):
     """Entrada del usuario (contrato 4.1)."""
@@ -71,3 +65,42 @@ class Idea(BaseModel):
     recursos_disponibles: str = ""
     restricciones: str = ""
     competencia_conocida: str = ""
+
+# --- Nuevos Contratos para la Base de Datos y la API ---
+
+# Contrato 4.3 Evaluacion
+class Evaluacion(BaseModel):
+    id: str
+    idea_id: str
+    version: int
+    fecha: datetime
+    modelo_ia: str
+    estado: str
+    resultado: EvaluacionIA
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class EstadoUpdate(BaseModel):
+    estado: str
+
+# Contrato 4.5 Comparacion
+class IdeaComparacion(BaseModel):
+    idea_id: str
+    nombre: str
+    semaforo: str
+    criterios_evaluados: CriteriosEvaluados
+
+class ComparacionReq(BaseModel):
+    idea_ids: list[str]
+
+class Comparacion(BaseModel):
+    criterios: list[str]
+    ideas: list[IdeaComparacion]
+
+# Contrato 4.6 Error
+class ErrorDetail(BaseModel):
+    codigo: str
+    mensaje: str
+
+class ErrorResponse(BaseModel):
+    error: ErrorDetail
