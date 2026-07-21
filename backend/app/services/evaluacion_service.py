@@ -1,7 +1,29 @@
+import hashlib
+import json
+
 from sqlalchemy.orm import Session
 from app.db import models
 from app.schemas import evaluacion as schemas  # <-- Cambio de import
 from app.ia.motor_ia import evaluar_idea
+from app.core.config import settings
+
+# Campos de la Idea que alimentan el prompt: el hash se calcula sobre ellos para
+# detectar si ya evaluamos exactamente el mismo contenido.
+_CAMPOS_CONTENIDO = [
+    "nombre", "descripcion", "problema", "publico_objetivo", "propuesta_valor",
+    "contexto_inicial", "sector", "pais_mercado", "tipo_cliente", "canales",
+    "recursos_disponibles", "restricciones", "competencia_conocida",
+]
+
+
+def _hash_idea(idea_dict: dict, modelo_ia: str) -> str:
+    """Hash estable del contenido + modelo. Incluye el modelo porque una misma
+    idea evaluada con otro modelo es un resultado distinto."""
+    contenido = {c: str(idea_dict.get(c, "") or "") for c in _CAMPOS_CONTENIDO}
+    contenido["__modelo__"] = modelo_ia
+    canonico = json.dumps(contenido, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(canonico.encode("utf-8")).hexdigest()
+
 
 def procesar_evaluacion(db: Session, idea_id: str) -> models.Evaluacion:
     idea_db = db.query(models.Idea).filter(models.Idea.id == idea_id).first()
@@ -11,25 +33,45 @@ def procesar_evaluacion(db: Session, idea_id: str) -> models.Evaluacion:
     # Convierte a dict para enviarlo al motor
     idea_dict = {c.name: getattr(idea_db, c.name) for c in idea_db.__table__.columns}
 
-    # Llama al motor de IA
+    # Deduplicación: si ya existe una evaluación para este contenido + modelo,
+    # la reutilizamos y NO gastamos tokens.
+    huella = _hash_idea(idea_dict, settings.IA_MODELO)
+    existente = (
+        db.query(models.Evaluacion)
+        .filter(
+            models.Evaluacion.idea_id == idea_id,
+            models.Evaluacion.idea_hash == huella,
+        )
+        .order_by(models.Evaluacion.fecha.desc())
+        .first()
+    )
+    if existente:
+        return existente
+
+    # Llama al motor de IA (puede cortar antes con EntradaIncompletaError, sin
+    # gastar tokens, si la idea está incompleta).
     evaluacion_ia = evaluar_idea(idea_dict)
 
     # Persistencia Evaluacion
     nueva_eval = models.Evaluacion(
         idea_id=idea_id,
         modelo_ia=evaluacion_ia.modelo_ia,
+        idea_hash=huella,
         # mode='json' convierte el Enum Semaforo a string automáticamente para SQLite
         resultado=evaluacion_ia.evaluacion.model_dump(mode='json')
     )
     db.add(nueva_eval)
     db.flush()
 
-    # Persistencia Trazabilidad del Prompt (4.4): prompt/respuesta reales.
+    # Persistencia Trazabilidad del Prompt (4.4): prompt/respuesta reales + consumo.
     nuevo_log = models.PromptLog(
         evaluacion_id=nueva_eval.id,
         prompt=evaluacion_ia.prompt,
         respuesta_cruda=evaluacion_ia.respuesta_cruda,
         modelo_ia=evaluacion_ia.modelo_ia,
+        tokens_prompt=evaluacion_ia.tokens_prompt,
+        tokens_completion=evaluacion_ia.tokens_completion,
+        tokens_cache_hit=evaluacion_ia.tokens_cache_hit,
     )
     db.add(nuevo_log)
     db.commit()

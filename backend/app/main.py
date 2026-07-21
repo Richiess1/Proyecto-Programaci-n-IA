@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app.api import endpoints
 from app.db.session import engine, Base
+from app.db.migraciones import aplicar_migraciones
 from app.ia.motor_ia import (
     EntradaIncompletaError,
     FormatoInesperado,
@@ -11,6 +12,7 @@ from app.ia.motor_ia import (
 )
 
 Base.metadata.create_all(bind=engine)
+aplicar_migraciones(engine)
 
 app = FastAPI(title="Evaluador de Ideas API")
 
