@@ -1,3 +1,214 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import ChipSemaforo from '../../components/ChipSemaforo'
+import AvisoIA from '../../components/AvisoIA'
+import ideasMock from '../../mocks/ideas.json'
+import evaluacionesMock from '../../mocks/evaluaciones.json'
+
+const CRITERIOS = [
+  { key: 'problema',       label: 'Problema' },
+  { key: 'mercado',        label: 'Mercado' },
+  { key: 'cliente',        label: 'Cliente' },
+  { key: 'diferenciacion', label: 'Diferenciación' },
+  { key: 'riesgos',        label: 'Riesgos' },
+  { key: 'monetizacion',   label: 'Monetización' },
+  { key: 'factibilidad',   label: 'Factibilidad' },
+]
+
+const chipValoracion: Record<string, string> = {
+  'Fuerte':   'bg-[#DCEFE0] text-[#1F6B3E]',
+  'Moderado': 'bg-[#F5E4B8] text-[#8A5F0E]',
+  'Débil':    'bg-[#F5D6D3] text-[#8B2E24]',
+}
+
+const colorSemaforo: Record<string, string> = {
+  verde:    '#2E7D4F',
+  amarillo: '#B07A17',
+  rojo:     '#B23A3A',
+}
+
+const borderChipSemaforo: Record<string, string> = {
+  verde:    'border-[#2E7D4F]',
+  amarillo: 'border-[#B07A17]',
+  rojo:     'border-[#B23A3A]',
+}
+
 export default function Comparacion() {
-  return <div>Pantalla 4 — Comparación de Ideas</div>
+  const navigate = useNavigate()
+
+  const ideasEvaluadas = ideasMock.filter((idea) =>
+    evaluacionesMock.some((e) => e.idea_id === idea.id)
+  )
+
+  const [seleccionadas, setSeleccionadas] = useState<string[]>(
+    ideasEvaluadas.slice(0, 2).map((i) => i.id)
+  )
+  const [mostrarSelector, setMostrarSelector] = useState(false)
+
+  const quitarIdea = (id: string) =>
+    setSeleccionadas((prev) => prev.filter((s) => s !== id))
+
+  const agregarIdea = (id: string) => {
+    if (!seleccionadas.includes(id)) setSeleccionadas((prev) => [...prev, id])
+    setMostrarSelector(false)
+  }
+
+  const ideasComparar = seleccionadas
+    .map((id) => {
+      const idea = ideasMock.find((i) => i.id === id)
+      const eval_ = evaluacionesMock.find((e) => e.idea_id === id)
+      return idea && eval_ ? { idea, eval_ } : null
+    })
+    .filter(Boolean) as { idea: typeof ideasMock[0]; eval_: typeof evaluacionesMock[0] }[]
+
+  const disponiblesParaAgregar = ideasEvaluadas.filter(
+    (i) => !seleccionadas.includes(i.id)
+  )
+
+  return (
+    <div className="min-h-screen bg-[#EDEFF2] flex">
+
+      {/* Sidebar */}
+      <aside className="w-52 bg-white border-r border-[#D2D6DC] flex flex-col px-4 py-6 gap-6 fixed h-full">
+        <div>
+          <p className="font-bold text-[#10161F] text-base tracking-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            EVALUADOR
+          </p>
+          <p className="text-[11px] text-[#2454C7]">de ideas de negocio</p>
+        </div>
+
+        <button
+          onClick={() => navigate('/registro')}
+          className="bg-[#2454C7] text-white text-sm font-medium px-4 py-2 rounded-sm hover:bg-[#1a3fa0] transition-colors text-left"
+        >
+          + Nueva idea
+        </button>
+
+        <nav className="flex flex-col gap-1">
+          <button
+            onClick={() => navigate('/')}
+            className="text-[#5B6472] text-sm text-left pl-2 hover:text-[#2454C7] transition-colors"
+          >
+            Ideas
+          </button>
+          <span className="text-[#10161F] text-sm font-medium border-l-[3px] border-[#2454C7] pl-2">
+            Comparar ideas
+          </span>
+        </nav>
+
+        <div className="mt-auto">
+          <AvisoIA />
+        </div>
+      </aside>
+
+      {/* Contenido principal */}
+      <main className="ml-52 flex-1 px-10 py-8">
+
+        <h1 className="text-2xl font-bold text-[#10161F] tracking-tight mb-6"
+          style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          Comparación de ideas
+        </h1>
+
+        {/* Selector de ideas */}
+        <div className="flex items-center gap-2 flex-wrap mb-6 relative">
+          {seleccionadas.map((id) => {
+            const idea = ideasMock.find((i) => i.id === id)
+            const eval_ = evaluacionesMock.find((e) => e.idea_id === id)
+            const semaforo = eval_?.resultado.semaforo as string | undefined
+            if (!idea) return null
+            return (
+              <span
+                key={id}
+                className={`flex items-center gap-2 bg-white border-2 ${semaforo ? borderChipSemaforo[semaforo] : 'border-[#D2D6DC]'} rounded-sm px-3 py-1 text-sm text-[#10161F] font-medium`}
+              >
+                {idea.nombre}
+                <button
+                  onClick={() => quitarIdea(id)}
+                  className="text-[#7A828E] hover:text-[#B23A3A] transition-colors text-xs ml-1"
+                >
+                  ✕
+                </button>
+              </span>
+            )
+          })}
+
+          {(
+            <div className="relative">
+              <button
+                onClick={() => setMostrarSelector((v) => !v)}
+                className="bg-[#2454C7] text-white text-sm font-medium px-4 py-1.5 rounded-sm hover:bg-[#1a3fa0] transition-colors"
+              >
+                + Agregar idea
+              </button>
+              {mostrarSelector && (
+                <div className="absolute top-9 left-0 bg-white border border-[#D2D6DC] rounded-sm shadow-md z-10 min-w-[180px]">
+                  {disponiblesParaAgregar.map((i) => (
+                    <button
+                      key={i.id}
+                      onClick={() => agregarIdea(i.id)}
+                      className="w-full text-left px-4 py-2 text-sm text-[#10161F] hover:bg-[#EDEFF2] transition-colors"
+                    >
+                      {i.nombre}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Tarjetas comparativas */}
+        {ideasComparar.length === 0 && (
+          <p className="text-sm text-[#5B6472] mt-10 text-center">
+            Seleccioná al menos una idea evaluada para comparar.
+          </p>
+        )}
+
+        <div
+          className="grid gap-4"
+          style={{ gridTemplateColumns: `repeat(${Math.max(ideasComparar.length, 1)}, minmax(280px, 1fr))` }}
+        >
+          {ideasComparar.map(({ idea, eval_ }) => {
+            const semaforo = eval_.resultado.semaforo as 'verde' | 'amarillo' | 'rojo'
+            return (
+              <div
+                key={idea.id}
+                className="bg-white border border-[#D2D6DC] border-t-[3px] rounded-sm px-5 py-5 shadow-sm"
+                style={{ borderTopColor: colorSemaforo[semaforo] }}
+              >
+                {/* Header tarjeta */}
+                <div className="flex justify-between items-center mb-5">
+                  <span className="font-bold text-[#10161F] text-lg"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                    {idea.nombre}
+                  </span>
+                  <ChipSemaforo semaforo={semaforo} />
+                </div>
+
+                {/* Criterios */}
+                <div className="flex flex-col">
+                  {CRITERIOS.map(({ key, label }, index) => {
+                    const valor = eval_.resultado.criterios_evaluados[
+                      key as keyof typeof eval_.resultado.criterios_evaluados
+                    ]
+                    return (
+                      <div
+                        key={key}
+                        className={`flex justify-between items-center py-2.5 ${index < CRITERIOS.length - 1 ? 'border-b border-[#EDEFF2]' : ''}`}
+                      >
+                        <span className="text-sm text-[#2454C7]">{label}</span>
+                        <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-sm ${chipValoracion[valor] || 'bg-[#E2E4E8] text-[#5B6472]'}`}>
+                          {valor}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </main>
+    </div>
+  )
 }

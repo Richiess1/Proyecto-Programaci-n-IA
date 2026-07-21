@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eval-001",
+    "idea_id": "40697a15-3e79-460f-b0a8-a02ed7ee0e5c",
+    "version": 2,
+    "fecha": "2026-07-10T00:00:00Z",
+    "modelo_ia": "deepseek-chat",
+    "estado": "aceptado",
+    "resultado": {
+      "semaforo": "verde",
+      "justificacion_semaforo": "Problema claro y mercado validable con bajo costo inicial.",
+      "diagnostico": "La idea resuelve un problema concreto de movilidad.",
+      "foda": {
+        "fortalezas": ["Problema local claro", "Bajo costo inicial"],
+        "debilidades": ["Monetización sin definir"],
+        "oportunidades": ["Poca oferta local"],
+        "amenazas": ["Regulación cambiante"]
+      },
+      "supuestos_criticos": ["Usuarios aceptan compartir viajes"],
+      "riesgos": ["Baja adopción inicial"],
+      "propuesta_valor_mejorada": "Movilidad compartida y segura para trayectos cortos.",
+      "preguntas_aclaracion": [],
+      "plan_validacion": [
+        { "tipo": "Entrevistas", "descripcion": "10 usuarios frecuentes", "metrica": "Disposición a pagar" }
+      ],
+      "criterios_evaluados": {
+        "problema": "Fuerte",
+        "mercado": "Moderado",
+        "cliente": "Fuerte",
+        "diferenciacion": "Moderado",
+        "riesgos": "Moderado",
+        "monetizacion": "Fuerte",
+        "factibilidad": "Fuerte"
+      }
+    }
+  },
+  {
+    "id": "eval-002",
+    "idea_id": "b1234567-89ab-cdef-0123-456789abcdef",
+    "version": 1,
+    "fecha": "2026-07-05T00:00:00Z",
+    "modelo_ia": "deepseek-chat",
+    "estado": "pendiente",
+    "resultado": {
+      "semaforo": "amarillo",
+      "justificacion_semaforo": "Mercado claro pero diferenciación débil.",
+      "diagnostico": "Idea con potencial pero requiere validar diferenciadores.",
+      "foda": {
+        "fortalezas": ["Problema real y frecuente"],
+        "debilidades": ["Competencia fuerte"],
+        "oportunidades": ["Mercado en crecimiento"],
+        "amenazas": ["Competidores consolidados"]
+      },
+      "supuestos_criticos": ["Usuarios pagarán por automatización"],
+      "riesgos": ["Alta competencia"],
+      "propuesta_valor_mejorada": "Ahorro automatizado para microempresarios.",
+      "preguntas_aclaracion": ["¿Cuál es el modelo de ingresos?"],
+      "plan_validacion": [
+        { "tipo": "Piloto", "descripcion": "20 microempresarios", "metrica": "Retención a 30 días" }
+      ],
+      "criterios_evaluados": {
+        "problema": "Fuerte",
+        "mercado": "Fuerte",
+        "cliente": "Moderado",
+        "diferenciacion": "Débil",
+        "riesgos": "Débil",
+        "monetizacion": "Moderado",
+        "factibilidad": "Débil"
+      }
+    }
+  }
+]
