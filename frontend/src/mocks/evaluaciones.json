@@ -1,0 +1,77 @@
+[
+  {
+    "id": "eval-1",
+    "idea_id": "40697a15-3e79-460f-b0a8-a02ed7ee0e5c",
+    "version": 2,
+    "estado": "ACEPTADO",
+    "semaforo_global": "VERDE",
+    "resumen_semaforo": "El problema está bien delimitado, existe validación municipal previa y el modelo de ingresos es replicable en otras comunas.",
+    "preguntas_aclaracion": [
+      "¿Cuál es el ticket promedio que los hogares están dispuestos a pagar?",
+      "¿Existen barreras legales para que recicladores informales facturen?"
+    ],
+    "diagnostico": "La idea aborda una falla de coordinación real entre recicladores informales y hogares que quieren reciclar pero no saben cómo. El equipo ya cuenta con tracción temprana (2 convenios municipales), lo que reduce el riesgo de adopción institucional.",
+    "foda": {
+      "fortalezas": [
+        "Alianza preliminar con 2 municipios",
+        "Equipo con experiencia en logística",
+        "Modelo de ingresos recurrente"
+      ],
+      "debilidades": [
+        "Dependencia de adopción por juntas de vecinos",
+        "Bajo margen unitario por vivienda"
+      ],
+      "oportunidades": [
+        "Nuevas normativas de responsabilidad extendida del productor (REP)",
+        "Expansión a otras comunas con perfil similar"
+      ],
+      "amenazas": [
+        "Cambios en administración municipal",
+        "Competencia de apps de reciclaje ya establecidas"
+      ]
+    },
+    "supuestos_criticos": [
+      "Los hogares pagarán una suscripción mensual por el servicio",
+      "Los recicladores adoptarán la app sin fricción",
+      "Los municipios renovarán el convenio anualmente"
+    ],
+    "riesgos": [
+      "Baja disposición de pago de los hogares",
+      "Rotación de recicladores socios",
+      "Cambio de prioridades políticas municipales"
+    ],
+    "propuesta_valor_original": "Conectamos oferta y demanda de reciclaje puerta a puerta con rutas optimizadas y trazabilidad del material recolectado.",
+    "propuesta_valor_mejorada": "Reciclaje puerta a puerta con trazabilidad y reporte de impacto para juntas de vecinos y municipios, a una fracción del costo de un programa municipal propio.",
+    "plan_validacion": [
+      {
+        "tipo": "ENTREVISTA",
+        "descripcion": "10 entrevistas con juntas de vecinos en dos comunas",
+        "meta": "≥6 con disposición a probar el servicio"
+      },
+      {
+        "tipo": "PILOTO",
+        "descripcion": "Piloto de 4 semanas con 50 hogares en un condominio",
+        "meta": "≥30% tasa de suscripción"
+      },
+      {
+        "tipo": "ENCUESTA",
+        "descripcion": "Encuesta de precio a recicladores de base",
+        "meta": "Disposición a pagar comisión <10%"
+      }
+    ],
+    "criterios": [
+      { "nombre": "Problema", "evaluacion": "FUERTE", "color": "verde" },
+      { "nombre": "Mercado", "evaluacion": "MODERADO", "color": "amarillo" },
+      { "nombre": "Cliente", "evaluacion": "FUERTE", "color": "verde" },
+      { "nombre": "Diferenciación", "evaluacion": "MODERADO", "color": "amarillo" },
+      { "nombre": "Riesgos", "evaluacion": "MODERADO", "color": "amarillo" },
+      { "nombre": "Monetización", "evaluacion": "FUERTE", "color": "verde" },
+      { "nombre": "Factibilidad", "evaluacion": "FUERTE", "color": "verde" }
+    ],
+    "historial": [
+      { "version": 2, "fecha": "10 jul 2026", "color": "verde" },
+      { "version": 1, "fecha": "2 jun 2026", "color": "amarillo" }
+    ],
+    "fecha_evaluacion": "2026-07-10T10:00:00Z"
+  }
+]
