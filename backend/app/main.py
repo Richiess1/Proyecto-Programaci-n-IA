@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 from app.api import endpoints
 from app.db.session import engine, Base
 from app.db.migraciones import aplicar_migraciones
@@ -15,6 +17,16 @@ Base.metadata.create_all(bind=engine)
 aplicar_migraciones(engine)
 
 app = FastAPI(title="Evaluador de Ideas API")
+
+# CORS: permite que el front (dev) llame al backend desde otro origen. Los puertos
+# cubren Vite (5173) y CRA (3000). Ajustar/ampliar cuando haya dominio de producción.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(endpoints.router)
 
