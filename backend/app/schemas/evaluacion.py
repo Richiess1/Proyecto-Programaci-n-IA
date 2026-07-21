@@ -2,6 +2,7 @@ from __future__ import annotations
 from enum import Enum
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
+from dataclasses import dataclass
 
 # --- Contratos base (lo que ya tenías) ---
 
@@ -32,7 +33,6 @@ class CriteriosEvaluados(BaseModel):
     factibilidad: str
 
 class EvaluacionIA(BaseModel):
-    model_config = ConfigDict(extra="forbid")
 
     semaforo: Semaforo
     justificacion_semaforo: str
@@ -87,7 +87,7 @@ class EstadoUpdate(BaseModel):
 class IdeaComparacion(BaseModel):
     idea_id: str
     nombre: str
-    semaforo: str
+    semaforo: Semaforo
     criterios_evaluados: CriteriosEvaluados
 
 class ComparacionReq(BaseModel):
@@ -104,3 +104,23 @@ class ErrorDetail(BaseModel):
 
 class ErrorResponse(BaseModel):
     error: ErrorDetail
+
+@dataclass(frozen=True)
+class ResultadoMotorIA:
+    """Retorno interno de evaluar_idea (sección 6, contrato v1.2).
+
+    No es un shape de la API (4.x); es lo que el motor pasa al backend, que lo
+    descompone:
+      - evaluacion    -> campo `resultado` de Evaluacion (4.3)
+      - modelo_ia     -> `modelo_ia` de Evaluacion (4.3) y de PromptLog (4.4)
+      - prompt        -> `prompt` de PromptLog (4.4)
+      - respuesta_cruda -> `respuesta_cruda` de PromptLog (4.4)
+    """
+    evaluacion: EvaluacionIA
+    prompt: str
+    respuesta_cruda: str
+    modelo_ia: str
+    # Consumo real reportado por el proveedor (para medir y controlar costos).
+    tokens_prompt: int = 0
+    tokens_completion: int = 0
+    tokens_cache_hit: int = 0
