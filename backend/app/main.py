@@ -2,7 +2,13 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app.api import endpoints
 from app.db.session import engine, Base
-from app.ia.motor_ia import RespuestaInvalidaIA, ProveedorIAError, LimiteTokensError, FormatoInesperado
+from app.ia.motor_ia import (
+    EntradaIncompletaError,
+    FormatoInesperado,
+    LimiteTokensError,
+    ProveedorIAError,
+    RespuestaInvalidaIA,
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -32,3 +38,8 @@ async def tokens_handler(request: Request, exc: LimiteTokensError):
 @app.exception_handler(FormatoInesperado)
 async def formato_handler(request: Request, exc: FormatoInesperado):
     return crear_respuesta_error("FORMATO_INESPERADO", str(exc), 500)
+
+@app.exception_handler(EntradaIncompletaError)
+async def entrada_incompleta_handler(request: Request, exc: EntradaIncompletaError):
+    # Rechazo local, sin gastar tokens: la idea no trae info suficiente.
+    return crear_respuesta_error("ENTRADA_INCOMPLETA", str(exc), 422)
