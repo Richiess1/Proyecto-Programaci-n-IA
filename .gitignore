@@ -1,0 +1,30 @@
+# --- Secretos / entorno ---
+.env
+.env.*
+!.env.example
+.venv
+venv/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Base de datos local (dev) ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Node / front (para cuando se implemente) ---
+node_modules/
+dist/
+build/
