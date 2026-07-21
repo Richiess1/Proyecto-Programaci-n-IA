@@ -1,74 +1,71 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-// Helper genérico para peticiones que maneja los 2 formatos de error
-async function request(endpoint, options = {}) {
-  const url = `${API_URL}${endpoint}`;
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    let errorData;
-    try {
-      errorData = await response.json();
-    } catch (e) {
-      throw { mensaje: "Error inesperado en el servidor", detail: "El servidor no devolvió JSON válido" };
+// ── Utilidad de manejo de errores ──────────────────────────────
+async function manejarRespuesta(res) {
+  const data = await res.json()
+  if (!res.ok) {
+    // Formato A: errores de negocio/IA
+    if (data.error?.codigo) throw new Error(data.error.mensaje)
+    // Formato B: errores estándar de FastAPI
+    if (data.detail) {
+      const msg = Array.isArray(data.detail)
+        ? data.detail.map((e) => e.msg).join(', ')
+        : data.detail
+      throw new Error(msg)
     }
-    
-    // Formato de error de negocio/IA
-    if (errorData.error && errorData.error.codigo) {
-      throw errorData.error; // { codigo: '...', mensaje: '...' }
-    }
-    
-    // Formato de error estándar de FastAPI
-    if (errorData.detail) {
-      const msg = Array.isArray(errorData.detail)
-        ? errorData.detail.map((err) => err.msg).join(", ")
-        : errorData.detail;
-      throw { mensaje: msg, detail: errorData.detail };
-    }
-    
-    throw { mensaje: errorData.message || "Error desconocido" };
+    throw new Error('Error inesperado')
   }
-
-  return response.json();
+  return data
 }
 
-export const apiClient = {
-  crearIdea: (ideaData) => {
-    return request("/ideas", {
-      method: "POST",
-      body: JSON.stringify(ideaData),
-    });
-  },
-  
-  evaluarIdea: (ideaId) => {
-    return request(`/ideas/${ideaId}/evaluar`, {
-      method: "POST",
-    });
-  },
-  
-  obtenerIdeas: () => request("/ideas"),
-  
-  obtenerIdea: (ideaId) => request(`/ideas/${ideaId}`),
-  
-  obtenerEvaluaciones: (ideaId) => request(`/ideas/${ideaId}/evaluaciones`),
-  
-  cambiarEstadoEvaluacion: (evaluacionId, estado) => {
-    return request(`/evaluaciones/${evaluacionId}/estado`, {
-      method: "PATCH",
-      body: JSON.stringify({ estado })
-    });
-  },
-  
-  compararIdeas: (ideaIds) => {
-    return request("/comparar", {
-      method: "POST",
-      body: JSON.stringify({ idea_ids: ideaIds })
-    });
-  }
-};
+// ── Ideas ───────────────────────────────────────────────────────
+export async function getIdeas() {
+  const res = await fetch(`${API}/ideas`)
+  return manejarRespuesta(res)
+}
+
+export async function getIdea(id) {
+  const res = await fetch(`${API}/ideas/${id}`)
+  return manejarRespuesta(res)
+}
+
+export async function crearIdea(datos) {
+  const res = await fetch(`${API}/ideas`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  })
+  return manejarRespuesta(res)
+}
+
+// ── Evaluaciones ────────────────────────────────────────────────
+export async function evaluarIdea(idea_id) {
+  const res = await fetch(`${API}/ideas/${idea_id}/evaluar`, {
+    method: 'POST',
+  })
+  return manejarRespuesta(res)
+}
+
+export async function getEvaluaciones(idea_id) {
+  const res = await fetch(`${API}/ideas/${idea_id}/evaluaciones`)
+  return manejarRespuesta(res)
+}
+
+export async function cambiarEstado(evaluacion_id, estado) {
+  const res = await fetch(`${API}/evaluaciones/${evaluacion_id}/estado`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ estado }),
+  })
+  return manejarRespuesta(res)
+}
+
+// ── Comparación ─────────────────────────────────────────────────
+export async function compararIdeas(idea_ids) {
+  const res = await fetch(`${API}/comparar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idea_ids }),
+  })
+  return manejarRespuesta(res)
+}

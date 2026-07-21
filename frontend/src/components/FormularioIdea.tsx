@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiClient } from '../services/apiClient'
+import { crearIdea, evaluarIdea } from '../services/apiClient'
 
 export default function FormularioIdea() {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ export default function FormularioIdea() {
     try {
       setIsSaving(true)
       setErrorMsg('')
-      await apiClient.crearIdea(formData)
+      await crearIdea(formData)
       navigate('/')
     } catch (error: any) {
       setErrorMsg(error.mensaje || 'Error al guardar la idea.')
@@ -53,10 +53,10 @@ export default function FormularioIdea() {
       setErrorMsg('')
       
       // 1. Guardar la idea primero
-      const ideaGuardada = await apiClient.crearIdea(formData)
-      
+      const ideaGuardada = await crearIdea(formData)
+
       // 2. Enviar a evaluar
-      await apiClient.evaluarIdea(ideaGuardada.id)
+      await evaluarIdea(ideaGuardada.id)
       
       // 3. Redirigir a la vista de detalle
       navigate(`/ideas/${ideaGuardada.id}`)
