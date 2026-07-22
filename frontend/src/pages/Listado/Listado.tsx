@@ -38,6 +38,33 @@ interface Idea {
   sector: string
 }
 
+const STORAGE_KEY = 'ideas_ocultas'
+const FAVORITOS_KEY = 'ideas_favoritas'
+
+function getIdsGuardados(key: string): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(key) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function ocultarIdea(id: string) {
+  const ocultas = getIdsGuardados(STORAGE_KEY)
+  if (!ocultas.includes(id)) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...ocultas, id]))
+  }
+}
+
+function toggleFavorita(id: string) {
+  const favoritas = getIdsGuardados(FAVORITOS_KEY)
+  const actualizadas = favoritas.includes(id)
+    ? favoritas.filter((f) => f !== id)
+    : [...favoritas, id]
+  localStorage.setItem(FAVORITOS_KEY, JSON.stringify(actualizadas))
+  return actualizadas
+}
+
 export default function Listado() {
   const navigate = useNavigate()
   const [ideas, setIdeas] = useState<Idea[]>([])
@@ -45,6 +72,20 @@ export default function Listado() {
   const [busqueda, setBusqueda] = useState('')
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [ocultas, setOcultas] = useState<string[]>(getIdsGuardados(STORAGE_KEY))
+  const [favoritas, setFavoritas] = useState<string[]>(getIdsGuardados(FAVORITOS_KEY))
+
+  const handleBorrar = (e: React.MouseEvent, id: string, nombre: string) => {
+    e.stopPropagation()
+    if (!confirm(`¿Borrar "${nombre}" del listado? (solo se oculta en este navegador, no se elimina del servidor)`)) return
+    ocultarIdea(id)
+    setOcultas(getIdsGuardados(STORAGE_KEY))
+  }
+
+  const handleToggleFavorita = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    setFavoritas(toggleFavorita(id))
+  }
 
   useEffect(() => {
     async function cargar() {
@@ -77,9 +118,11 @@ export default function Listado() {
   }, [])
 
   const ideasFiltradas = ideas.filter((idea) =>
-    idea.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    idea.sector?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    idea.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+    !ocultas.includes(idea.id) && (
+      idea.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      idea.sector?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      idea.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+    )
   )
 
   return (
@@ -141,11 +184,11 @@ export default function Listado() {
                 <div
                   key={idea.id}
                   onClick={() => navigate(`/ideas/${idea.id}`)}
-                  className="bg-white border border-[#D2D6DC] border-l-[4px] rounded-sm px-5 py-4 cursor-pointer hover:shadow-sm transition-shadow"
+                  className="bg-white border border-[#D2D6DC] border-l-4 rounded-sm px-5 py-4 cursor-pointer hover:shadow-sm transition-shadow"
                   style={{ borderLeftColor: bordeColor }}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`${avatarColor} text-white font-bold text-sm w-9 h-9 rounded-sm flex items-center justify-center flex-shrink-0`}>
+                    <div className={`${avatarColor} text-white font-bold text-sm w-9 h-9 rounded-sm flex items-center justify-center shrink-0`}>
                       {inicial}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -161,13 +204,26 @@ export default function Listado() {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                        <div className="flex items-center gap-2 shrink-0 ml-4">
                           <span className="text-[11px] text-[#7A828E]">
                             {eval_
                               ? `V${eval_.version} · ${new Date(eval_.fecha).toLocaleDateString('es-SV', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}`
                               : 'SIN EVALUAR'}
                           </span>
-                          <span className="text-[#D2D6DC] hover:text-[#B07A17] cursor-pointer transition-colors">☆</span>
+                          <button
+                            onClick={(e) => handleToggleFavorita(e, idea.id)}
+                            title={favoritas.includes(idea.id) ? 'Quitar de favoritas' : 'Marcar como favorita'}
+                            className={`cursor-pointer transition-colors ${favoritas.includes(idea.id) ? 'text-[#B07A17]' : 'text-[#D2D6DC] hover:text-[#B07A17]'}`}
+                          >
+                            {favoritas.includes(idea.id) ? '★' : '☆'}
+                          </button>
+                          <button
+                            onClick={(e) => handleBorrar(e, idea.id, idea.nombre)}
+                            title="Borrar idea del listado"
+                            className="text-[#D2D6DC] hover:text-[#B23A3A] cursor-pointer transition-colors font-bold text-sm"
+                          >
+                            ✕
+                          </button>
                           <span className="text-[#2454C7] text-sm">→</span>
                         </div>
                       </div>
