@@ -1,0 +1,50 @@
+[
+  {
+    "id": "40697a15-3e79-460f-b0a8-a02ed7ee0e5c",
+    "nombre": "EcoRuta",
+    "descripcion": "App de rutas compartidas para zonas sin transporte fijo, pensada para trayectos cortos en horas pico.",
+    "problema": "Transporte deficiente en horas pico y trayectos cortos.",
+    "publico_objetivo": "Trabajadores en zonas sin transporte público fijo.",
+    "propuesta_valor": "Rutas compartidas para trayectos cortos.",
+    "contexto_inicial": "",
+    "sector": "Movilidad",
+    "pais_mercado": "El Salvador",
+    "tipo_cliente": "B2C",
+    "canales": "App móvil",
+    "recursos_disponibles": "Equipo de 3",
+    "restricciones": "Sin financiamiento externo",
+    "competencia_conocida": "Apps de carpooling existentes"
+  },
+  {
+    "id": "b1234567-89ab-cdef-0123-456789abcdef",
+    "nombre": "NutriPlan IA",
+    "descripcion": "Planes de alimentación generados a partir de condiciones médicas y presupuesto del usuario.",
+    "problema": "Dificultad para acceder a planes nutricionales personalizados.",
+    "publico_objetivo": "Personas con condiciones médicas que requieren dieta especial.",
+    "propuesta_valor": "Planes nutricionales personalizados y accesibles.",
+    "contexto_inicial": "",
+    "sector": "Salud",
+    "pais_mercado": "El Salvador",
+    "tipo_cliente": "B2C",
+    "canales": "Web, app móvil",
+    "recursos_disponibles": "Equipo de 2, nutricionista asesor",
+    "restricciones": "Presupuesto limitado",
+    "competencia_conocida": "Apps de nutrición genéricas"
+  },
+  {
+    "id": "c9876543-21fe-dcba-9876-543210fedcba",
+    "nombre": "AulaViva",
+    "descripcion": "Refuerzo escolar personalizado para colegios rurales con acceso limitado a internet.",
+    "problema": "Estudiantes rurales no acceden a refuerzo educativo personalizado.",
+    "publico_objetivo": "Colegios públicos rurales y sus estudiantes de secundaria.",
+    "propuesta_valor": "Contenido offline-first que se adapta al ritmo de cada estudiante.",
+    "contexto_inicial": "",
+    "sector": "Educación",
+    "pais_mercado": "El Salvador",
+    "tipo_cliente": "B2B",
+    "canales": "Tablets, USB",
+    "recursos_disponibles": "Equipo docente voluntario, tablets donadas",
+    "restricciones": "Sin conexión a internet estable",
+    "competencia_conocida": "Khan Academy"
+  }
+]

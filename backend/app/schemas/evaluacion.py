@@ -46,25 +46,31 @@ class EvaluacionIA(BaseModel):
     criterios_evaluados: CriteriosEvaluados
 
 class Idea(BaseModel):
-    """Entrada del usuario (contrato 4.1)."""
+    """Entrada del usuario (contrato 4.1).
+
+    Cada campo tiene un `max_length`: acota el tamaño del prompt y cierra el abuso
+    de costo (pegar textos gigantes para inflar el consumo de tokens). El límite se
+    aplica al crear la idea, así nunca se persiste ni se manda al modelo algo fuera
+    de rango.
+    """
     id: str | None = None
 
     # Mínimos obligatorios antes de evaluar (RNF-04).
-    nombre: str = Field(min_length=1)
-    descripcion: str = Field(min_length=1)
-    problema: str = Field(min_length=1)
-    publico_objetivo: str = Field(min_length=1)
-    propuesta_valor: str = Field(min_length=1)
+    nombre: str = Field(min_length=1, max_length=120)
+    descripcion: str = Field(min_length=1, max_length=3000)
+    problema: str = Field(min_length=1, max_length=3000)
+    publico_objetivo: str = Field(min_length=1, max_length=1500)
+    propuesta_valor: str = Field(min_length=1, max_length=3000)
 
     # El resto puede ir vacío.
-    contexto_inicial: str = ""
-    sector: str = ""
-    pais_mercado: str = ""
-    tipo_cliente: str = ""
-    canales: str = ""
-    recursos_disponibles: str = ""
-    restricciones: str = ""
-    competencia_conocida: str = ""
+    contexto_inicial: str = Field(default="", max_length=3000)
+    sector: str = Field(default="", max_length=200)
+    pais_mercado: str = Field(default="", max_length=200)
+    tipo_cliente: str = Field(default="", max_length=500)
+    canales: str = Field(default="", max_length=1000)
+    recursos_disponibles: str = Field(default="", max_length=2000)
+    restricciones: str = Field(default="", max_length=2000)
+    competencia_conocida: str = Field(default="", max_length=2000)
 
 # --- Nuevos Contratos para la Base de Datos y la API ---
 
@@ -91,7 +97,8 @@ class IdeaComparacion(BaseModel):
     criterios_evaluados: CriteriosEvaluados
 
 class ComparacionReq(BaseModel):
-    idea_ids: list[str]
+    # Tope de ideas por comparación: evita lotes gigantes que sobrecarguen la consulta.
+    idea_ids: list[str] = Field(min_length=1, max_length=20)
 
 class Comparacion(BaseModel):
     criterios: list[str]
