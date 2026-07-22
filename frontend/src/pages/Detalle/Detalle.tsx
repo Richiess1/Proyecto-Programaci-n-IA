@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar'
 import ChipSemaforo from '../../components/ChipSemaforo'
-import { getIdea, getEvaluaciones, evaluarIdea, cambiarEstado } from '../../services/apiClient'
+import { getIdea, getEvaluaciones, cambiarEstado } from '../../services/apiClient'
 
 const colorSemaforo: Record<string, string> = {
   verde: '#2E7D4F',
@@ -58,7 +58,7 @@ export default function Detalle() {
   const [idea, setIdea] = useState<Idea | null>(null)
   const [evaluaciones, setEvaluaciones] = useState<Evaluacion[]>([])
   const [cargando, setCargando] = useState(true)
-  const [evaluando, setEvaluando] = useState(false)
+  const [evaluando] = useState(false)
   const [error, setError] = useState('')
   const [cambiandoEstado, setCambiandoEstado] = useState(false)
 
@@ -85,20 +85,6 @@ export default function Detalle() {
   }, [cargarDatos])
 
   const ultimaEvaluacion = evaluaciones[evaluaciones.length - 1]
-
-  const handleEvaluar = async () => {
-    if (!id) return
-    try {
-      setEvaluando(true)
-      setError('')
-      await evaluarIdea(id)
-      await cargarDatos()
-    } catch (e: any) {
-      setError(e.message || 'Hubo un error al evaluar la idea.')
-    } finally {
-      setEvaluando(false)
-    }
-  }
 
   const handleCambiarEstado = async (estado: string) => {
     if (!ultimaEvaluacion) return

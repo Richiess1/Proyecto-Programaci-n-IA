@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import ChipSemaforo from '../../components/ChipSemaforo'
 import Sidebar from '../../components/Sidebar'
 import { getIdeas, compararIdeas } from '../../services/apiClient'
@@ -41,7 +40,6 @@ interface ResultadoComparacion {
 }
 
 export default function Comparacion() {
-  const navigate = useNavigate()
   const [ideas, setIdeas] = useState<Idea[]>([])
   const [seleccionadas, setSeleccionadas] = useState<string[]>([])
   const [resultados, setResultados] = useState<ResultadoComparacion[]>([])
