@@ -162,13 +162,6 @@ export default function Detalle() {
             </div>
             {idea.sector && <p className="text-[11px] text-[#5B6472] tracking-wide uppercase mt-1">{idea.sector}</p>}
           </div>
-          <button
-            onClick={handleEvaluar}
-            disabled={evaluando}
-            className="bg-[#2454C7] text-white text-sm font-medium px-4 py-2 rounded-sm hover:bg-[#1a3fa0] transition-colors disabled:opacity-50 shrink-0"
-          >
-            {evaluando ? 'Evaluando...' : ultimaEvaluacion ? 'Volver a evaluar' : 'Evaluar con IA'}
-          </button>
         </div>
 
         {error && (
