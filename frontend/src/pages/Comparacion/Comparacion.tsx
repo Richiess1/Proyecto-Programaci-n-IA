@@ -145,7 +145,7 @@ export default function Comparacion() {
         )}
 
         {!cargando && resultados.length > 0 && (
-          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${resultados.length}, minmax(280px, 1fr))` }}>
+          <div className={`grid gap-4 ${resultados.length === 1 ? 'grid-cols-1' : resultados.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
             {resultados.map((r) => (
               <div
                 key={r.idea_id}
@@ -164,10 +164,13 @@ export default function Comparacion() {
                     return (
                       <div
                         key={key}
-                        className={`flex justify-between items-center py-2.5 ${index < CRITERIOS.length - 1 ? 'border-b border-[#EDEFF2]' : ''}`}
+                        className={`flex items-stretch gap-3 min-h-[52px] py-2 ${index < CRITERIOS.length - 1 ? 'border-b border-[#EDEFF2]' : ''}`}
                       >
-                        <span className="text-sm text-[#2454C7]">{label}</span>
-                        <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-sm ${chipValoracion[valor] || 'bg-[#E2E4E8] text-[#5B6472]'}`}>
+                        <span className="text-sm text-[#2454C7] shrink-0 w-24 flex items-center">{label}</span>
+                        <span
+                          title={valor}
+                          className={`flex-1 flex items-center justify-center text-center min-w-0 min-h-[36px] text-[10px] leading-snug font-medium px-2.5 py-1.5 rounded-sm ${chipValoracion[valor] || 'bg-[#E2E4E8] text-[#5B6472]'}`}
+                        >
                           {valor}
                         </span>
                       </div>
