@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     IA_PROVEEDOR: str = "deepseek"
     IA_API_KEY: str
-    IA_MODELO: str = "deepseek-chat"
+    IA_MODELO: str = "deepseek-v4-flash"
     # Endpoint compatible con la API de OpenAI que expone DeepSeek.
     IA_BASE_URL: str = "https://api.deepseek.com"
 
