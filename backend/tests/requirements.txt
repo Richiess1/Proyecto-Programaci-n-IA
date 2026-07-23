@@ -1,0 +1,13 @@
+# La suite en sí no necesita nada fuera de la librería estándar de Python
+# (unittest, unittest.mock) + lo que ya está en backend/requirements.txt
+# (fastapi trae TestClient, que usa httpx — ya es dependencia transitiva).
+#
+# Estos paquetes son OPCIONALES: si hay acceso a PyPI, mejoran la experiencia
+# de correr los tests pero no son necesarios (ver docs/PRUEBAS.md, sección
+# "Herramientas", sobre por qué la suite no depende de pytest).
+#
+#   pip install -r backend/tests/requirements.txt
+#
+pytest>=8.0        # runner opcional: descubre y corre las mismas TestCase sin cambios
+pytest-cov>=5.0    # `pytest --cov=app` para métricas de cobertura
+coverage>=7.0       # alternativa a pytest-cov si se prefiere `python -m unittest` + coverage run

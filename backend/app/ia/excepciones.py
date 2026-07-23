@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class MotorIAError(Exception):
     """Base de los errores propios del Motor IA. `codigo` mapea al Error 4.6."""
     codigo: str = "FORMATO_INESPERADO"
