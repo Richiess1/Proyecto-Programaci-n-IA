@@ -1,7 +1,5 @@
 # Pruebas automatizadas — Evaluador de Ideas (backend)
 
-**Autor(a):** Marjorie Monson
-
 En este documento describo la suite de pruebas que escribí para el backend:
 qué probé, por qué, con qué herramientas, cómo correrla, y qué dejé fuera de
 alcance. Complementa a [`DOCUMENTACION_TECNICA.md`](DOCUMENTACION_TECNICA.md)
